@@ -1,0 +1,21 @@
+{% extends "layouts.html" %}
+
+{% block content %}
+
+
+<div class="container">
+  <div class="text-center h1 text-success"> Registrar </div>
+      {% from "_formularioajuda.html" import render_field %}
+  <form method="post" enctype="multipart/form-data">
+    <div>
+      {{ render_field(form.nomeCompleto, class="form-control") }}
+      {{ render_field(form.email, class="form-control") }}
+      {{ render_field(form.senha, class="form-control") }}
+      {{ render_field(form.confirmacao, class="form-control") }}
+
+    </div>
+    <p><input type="submit" value="Registrar" class="btn btn-info mt-2"></p>
+  </form>
+</div>
+
+{% endblock content %}
