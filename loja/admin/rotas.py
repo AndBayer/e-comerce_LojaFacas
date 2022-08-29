@@ -40,6 +40,6 @@ def login():
             flash(f'Ola,  {form.email.data} Voce esta logado','success')
             return redirect(request.args.get('next')or url_for('admin'))
         else:
-            flash('Nao foi possível logar no sistema')
+            flash('Nao foi possível logar no sistema','danger')
     return render_template('admin/login.html', form=form, title="Pagina Login")
     
