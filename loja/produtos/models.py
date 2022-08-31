@@ -9,7 +9,6 @@ class Addproduto(db.Model):
     stock    = db.Column(db.Integer, nullable=False)
     colors   = db.Column(db.Text, nullable=False)
     desc     = db.Column(db.Text, nullable=False)
-
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     marca_id = db.Column(db.Integer, db.ForeignKey('marca.id'), nullable=False)
@@ -29,7 +28,6 @@ class Addproduto(db.Model):
 class Marca(db.Model):
     id     = db.Column(db.Integer, primary_key=True)
     name   = db.Column(db.String(30), nullable=False, unique=True)
-    teste = db.Column(db.String(30), nullable=False, unique=True)
 
 
 class Categoria(db.Model):
