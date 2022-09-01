@@ -1,7 +1,7 @@
 
 from turtle import title
 from flask import render_template, session, request, url_for, flash, redirect
-from loja.produtos.models import Addproduto
+from loja.produtos.models import Addproduto, Marca, Categoria
 from loja import app, db, bcrypt
 from .formulario import RegistrationForm, LoginFormulario
 from .models import User
@@ -16,6 +16,26 @@ def admin():
         return redirect(url_for('login'))
     produtos = Addproduto.query.all()
     return render_template('admin/index.html', title="Pagina Administrativa", produtos=produtos)
+
+
+@app.route('/marcas')
+def marcas():
+    if 'email' not in session:
+        flash('Favor efetuar login primeiro', 'danger')
+        return redirect(url_for('login'))
+    marcas = Marca.query.order_by(Marca.id.desc()).all()
+    return render_template('admin/marca.html', title="Pagina Marcas", marcas=marcas)
+
+
+@app.route('/categoria')
+def categoria():
+    if 'email' not in session:
+        flash('Favor efetuar login primeiro', 'danger')
+        return redirect(url_for('login'))
+    categorias = Categoria.query.order_by(Categoria.id.desc()).all()
+    return render_template('admin/marca.html', title="Pagina Categorias", categorias=categorias)
+
+
 
 @app.route('/registrar', methods=['GET', 'POST'])
 def registrar():
