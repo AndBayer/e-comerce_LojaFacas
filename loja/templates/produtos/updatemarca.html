@@ -11,7 +11,7 @@
 
             {% if updatemarca %}
 
-            <h2 class="text-center mt-5"> Editar Marcas</h2>
+            <h2 class="text-center mt-5">Editar Marcas</h2>
             <form action="" method="POST">
                 <input type="text" name="marca" class="form-control" value="{{updatemarca.name}}">
                 <input type="submit" value="Atualizar Fabricante" class="btn btn-success mt-2">
@@ -19,12 +19,13 @@
             <a href="{{url_for('marcas')}}" class="btn btn-danger" style="margin-top: -67px; margin-left: 180px">Cancelar</a>
 
             {% else %}
-            <h2 class="text-center mt-5"> Cadastrar Categorias</h2>
+            <h2 class="text-center mt-5">Editar Categorias</h2>
             <form action="" method="POST">
                 <input type="text" name="categoria" class="form-control" value="{{updatecat.name}}">
-                <input type="submit" value="Atualizar categoria" class="btn btn-success mt-2">
+                <input type="submit" value="Atualizar Categoria" class="btn btn-success mt-2">
             </form>
             <a href="{{url_for('categoria')}}" class="btn btn-danger" style="margin-top: -67px; margin-left: 180px">Cancelar</a>
+
             {% endif %}
         </div>
         <div class="col-md-3"></div>

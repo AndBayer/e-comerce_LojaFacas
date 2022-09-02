@@ -1,8 +1,8 @@
-from flask import redirect, render_template, url_for, flash, request, session
+from flask import redirect, render_template, url_for, flash, request, session, current_app
 from .forms import Addprodutos
 from loja import db, app, photos
 from .models import Marca, Categoria, Addproduto
-import secrets
+import secrets, os
 
 
 @app.route('/addmarca', methods=['GET','POST'])
@@ -34,6 +34,17 @@ def updatemarca(id):
         return redirect(url_for('marcas'))
     return render_template('/produtos/updatemarca.html', title='Atualizar Fabricantes', updatemarca=updatemarca)
 
+@app.route('/deletemarca/<int:id>', methods=['POST'])
+def deletemarca(id):
+    marca = Marca.query.get_or_404(id)
+    if request.method == "POST":
+        db.session.delete(marca)
+        db.session.commit()
+        flash(f'A marca {marca.name} foi deletada com sucesso','success')
+        return redirect(url_for('admin'))
+    flash(f'A marca {marca.name} NÃO foi deletada','warning')
+    return redirect(url_for('admin'))
+
 @app.route('/updatecat/<int:id>', methods=['GET','POST'])
 def updatecat(id):
     if 'email' not in session:
@@ -43,7 +54,7 @@ def updatecat(id):
     updatecat= Categoria.query.get_or_404(id)
     categoria = request.form.get('categoria')
     if request.method == 'POST':
-        updatemarca.name = categoria
+        updatecat.name = categoria
         flash(f'Sua categoria foi atualizada com sucesso','success')
         db.session.commit()
         return redirect(url_for('categoria'))
@@ -97,3 +108,56 @@ def addproduto():
         
     return render_template('produtos/addproduto.html', title="Cadastrar Produtos", form=form, marcas=marcas,
     categorias=categorias)
+
+@app.route('/updateproduto/<int:id>', methods=['GET','POST'])
+def updateproduto(id):
+    marcas = Marca.query.all()
+    categorias = Categoria.query.all()
+    produto = Addproduto.query.get_or_404(id)
+    marca = request.form.get('marca')
+    categoria = request.form.get('categoria')
+    form = Addprodutos(request.form)
+    if request.method == "POST":
+        produto.name = form.name.data
+        produto.price = form.price.data
+        produto.discount = form.discount.data
+        produto.marca_id = marca
+        produto.categoria_id = categoria
+        produto.desc = form.description.data
+        produto.stock = form.stock.data
+        produto.colors = form.colors.data
+
+        if request.files.get('image_1'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_1))
+                produto.image_1 = photos.save(request.files.get('image_1'),name=secrets.token_hex(10)+".")
+            except:
+                produto.image_1 = photos.save(request.files.get('image_1'),name=secrets.token_hex(10)+".")
+        
+        if request.files.get('image_2'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_2))
+                produto.image_2 = photos.save(request.files.get('image_2'),name=secrets.token_hex(10)+".")
+            except:
+                produto.image_2 = photos.save(request.files.get('image_2'),name=secrets.token_hex(10)+".")
+        
+        if request.files.get('image_3'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_3))
+                produto.image_3 = photos.save(request.files.get('image_3'),name=secrets.token_hex(10)+".")
+            except:
+                produto.image_3 = photos.save(request.files.get('image_3'),name=secrets.token_hex(10)+".")
+        
+        db.session.commit()
+        flash(f'Produto foi atualizado com sucesso','success')
+        return redirect('/')
+
+    form.name.data = produto.name
+    form.price.data = produto.price
+    form.discount.data = produto.discount
+    form.description.data = produto.desc
+    form.stock.data = produto.stock
+    form.colors.data = produto.colors
+    
+
+    return render_template('/produtos/updateproduto.html', title='Atualizar Produtos', form=form,marcas=marcas,categorias=categorias,produto=produto) 

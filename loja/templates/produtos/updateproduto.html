@@ -8,7 +8,7 @@
     <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h2 class="text-center">Adicionar Produtos</h2>
+        <h2 class="text-center">Editar Produtos</h2>
         {% from '_formularioajuda.html' import render_field %}
         <form action="" method="POST" enctype="multipart/form-data">
 
@@ -20,7 +20,7 @@
 
             <label for="marca"><b> Adicionar uma marca:</b></label>
             <select name="marca" id="marca" class="form-control" required>
-                <option value="">Selecione uma marca</option>
+                <option value="{{produto.marca_id}}">{{produto.marca.name}}</option>
                 {% for marca in marcas %}
                 <option value="{{marca.id}}">{{marca.name}}</option>
                 {% endfor %}
@@ -28,7 +28,7 @@
 
             <label for="categoria"><b>Adicionar uma categoria:</b></label>
             <select name="categoria" id="categoria" class="form-control" required>
-                <option value="">Selecione uma categoria</option>
+                <option value="{{produto.categoria_id}}">{{produto.categoria.name}}</option>
                 {% for categoria in categorias %}
                 <option value="{{categoria.id}}">{{categoria.name}}</option>
                 {% endfor %}
@@ -39,12 +39,12 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-4">{{ render_field(form.image_1, class="form-control", required)}}</div>
-                    <div class="col-md-4">{{ render_field(form.image_2, class="form-control", required)}}</div>
-                    <div class="col-md-4">{{ render_field(form.image_3, class="form-control", required)}}</div>
+                    <div class="col-md-4">{{ render_field(form.image_1, class="form-control")}}</div>
+                    <div class="col-md-4">{{ render_field(form.image_2, class="form-control")}}</div>
+                    <div class="col-md-4">{{ render_field(form.image_3, class="form-control")}}</div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success mt-2">Cadastrar</button>
+            <button type="submit" class="btn btn-success mt-4 mb-5">Atualizar Produto</button>
         </form>
     </div>
     <div class="col-md-2"></div>
