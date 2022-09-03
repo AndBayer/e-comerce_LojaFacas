@@ -34,16 +34,20 @@ def updatemarca(id):
         return redirect(url_for('marcas'))
     return render_template('/produtos/updatemarca.html', title='Atualizar Fabricantes', updatemarca=updatemarca)
 
-@app.route('/deletemarca/<int:id>', methods=['POST'])
+
+
+@app.route('/deletemarca/<int:id>', methods=['GET','POST'])
 def deletemarca(id):
     marca = Marca.query.get_or_404(id)
-    if request.method == "POST":
+    if request.method == 'POST':
         db.session.delete(marca)
         db.session.commit()
         flash(f'A marca {marca.name} foi deletada com sucesso','success')
         return redirect(url_for('admin'))
     flash(f'A marca {marca.name} NÃO foi deletada','warning')
     return redirect(url_for('admin'))
+
+
 
 @app.route('/updatecat/<int:id>', methods=['GET','POST'])
 def updatecat(id):
