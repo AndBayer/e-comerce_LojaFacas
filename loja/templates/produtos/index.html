@@ -36,7 +36,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link" href="{{url_for('getCart')}}" tabindex="-1">Carrinho({{session['LojainCarrinho']|length}})</a>
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -53,33 +53,45 @@
     <div class="row">
         {% if marca %}
         {% for m in marca.items %}
-        <div class="col-md-3">
-            <div class="card">
-                <img src="{{url_for('static',filename='images/'+ m.image_1)}}" alt="{{m.name}}" class="card-img-top" height="180">
-                <div class="card-body">
-                    {% if m.discount > 0 %}
-                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
-                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{m.discount}}%</h4>
-                    {% endif %}
-                    <h4 class="text-center">{{m.name}}</h4>
-                    <p class="text-center">Preço R${{m.price}}</p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
-                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
-                </div>
-            </div>
-        </div>
+        <div class="col-md-3 mt-4">
+          <div class="card">
+              <img src="{{url_for('static',filename='images/'+ m.image_1)}}" alt="{{m.name}}" class="card-img-top" height="200">
+              <div class="card-body">
+                  {% if m.discount > 0 %}
+                  <h5 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg);
+                  position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{m.discount}}%</h5>
+                  {% endif %}
+                  <h4 class="text-center">{{m.name}}</h4>
+                  <p class="text-center">Preço R${{m.price}}</p>
+              </div>
+              <div class="card-footer text-center">
+                <form action="{{url_for('AddCart')}}" method="POST">
+                  <a href="{{url_for('pagina_unica', id=m.id)}}" class="float-left btn btn-sm btn-primary">Detalhes</a>
+                    <input type="hidden" name="produto_id" value="{{m.id}}">
+                    <button type="submit" class="btn btn-sm btn-success float-right">Adicionar ao Carrinho</button>
+                    <input type="hidden" name="quantity" id="" value="1" min='1' max="{{m.stock}}">
+                    {% set colors = m.colors.split(',') %}
+                    <select name="colors" id="colors" style="visibility:hidden">
+                        {% for color in colors %}
+                        {% set col = color.split(':') %}
+                        <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+              </div>
+          </div>
+      </div>
         {% endfor %}
     </div>
     <div class="row">
     
         <div class="col text-center">
-         {% if marca.has_prev %}
+          {% if marca.total > 4 %}
+          {% if marca.has_prev %}
          <a href="{{url_for('get_marca', id=get_m.id , pagina=marca.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
          {% endif %}
  
-         {% for page_num in marca.iter_pages() %}
+         {% for page_num in marca.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
          {% if page_num %}
  
          {% if marca.page == page_num %}
@@ -93,8 +105,10 @@
          {% endif %}
  
          {% endfor %}
+         
          {% if marca.has_next %}
          <a href="{{url_for('get_marca',id=get_m.id, pagina=marca.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+         {% endif %}
          {% endif %}
         </div>
      </div>
@@ -103,69 +117,95 @@
         {% elif get_cat_prod %}
         {% for get_cat in get_cat_prod.items %}
         
-        <div class="col-md-3">
-            <div class="card">
-                <img src="{{url_for('static',filename='images/'+ get_cat.image_1)}}" alt="{{get_cat.name}}" class="card-img-top" height="180">
-                <div class="card-body">
-                    {% if get_cat.discount > 0 %}
-                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
-                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{get_cat.discount}}%</h4>
-                    {% endif %}
-                    <h4 class="text-center">{{get_cat.name}}</h4>
-                    <p class="text-center">Preço R${{get_cat.price}}</p>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
-                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
-                </div>
-            </div>
-        </div>
+        <div class="col-md-3 mt-4">
+          <div class="card">
+              <img src="{{url_for('static',filename='images/'+ get_cat.image_1)}}" alt="{{get_cat.name}}" class="card-img-top" height="200">
+              <div class="card-body">
+                  {% if get_cat.discount > 0 %}
+                  <h5 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg);
+                  position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{get_cat.discount}}%</h5>
+                  {% endif %}
+                  <h4 class="text-center">{{get_cat.name}}</h4>
+                  <p class="text-center">Preço R${{get_cat.price}}</p>
+              </div>
+              <div class="card-footer text-center">
+                <form action="{{url_for('AddCart')}}" method="POST">
+                  <a href="{{url_for('pagina_unica', id=get_cat.id)}}" class="float-left btn btn-sm btn-primary">Detalhes</a>
+                    <input type="hidden" name="produto_id" value="{{get_cat.id}}">
+                    <button type="submit" class="btn btn-sm btn-success float-right">Adicionar ao Carrinho</button>
+                    <input type="hidden" name="quantity" id="" value="1" min='1' max="{{get_cat.stock}}">
+                    {% set colors = get_cat.colors.split(',') %}
+                    <select name="colors" id="colors" style="visibility:hidden">
+                        {% for color in colors %}
+                        {% set col = color.split(':') %}
+                        <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+              </div>
+          </div>
+      </div>
         {% endfor %}
 
         <div class="row">
     
             <div class="col text-center">
-             {% if get_cat_prod.has_prev %}
-             <a href="{{url_for('get_categoria', id=get_cat.id , pagina=get_cat_prod.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
-             {% endif %}
-     
-             {% for page_num in get_cat_prod.iter_pages() %}
-             {% if page_num %}
-     
-             {% if get_cat_prod.page == page_num %}
-             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-dark btn-sm mt-3">{{page_num}}</a>
-             {% else %}
-             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-outline-dark btn-sm mt-3">{{page_num}}</a>
-             {% endif %}
-     
-             {% else %}
-             ...
-             {% endif %}
-     
-             {% endfor %}
-             {% if get_cat_prod.has_next %}
-             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=get_cat_prod.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
-             {% endif %}
+              {% if get_cat_prod.total > 4 %}
+              {% if get_cat_prod.has_prev %}
+              
+              <a href="{{url_for('get_categoria', id=get_cat.id , pagina=get_cat_prod.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
+                        {% endif %}
+      
+              {% for page_num in get_cat_prod.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
+              {% if page_num %}
+      
+              {% if get_cat_prod.page == page_num %}
+              <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-dark btn-sm mt-3">{{page_num}}</a>
+              {% else %}
+              <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-outline-dark btn-sm mt-3">{{page_num}}</a>
+              {% endif %}
+      
+              {% else %}
+              ...
+              {% endif %}
+      
+              {% endfor %}
+              
+              {% if get_cat_prod.has_next %}
+              <a href="{{url_for('get_categoria',id=get_cat.id, pagina=get_cat_prod.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+              {% endif %}
+              {% endif %}
             </div>
          </div>
 
         <div class="row">
         {% else %}
         {% for produto in produtos.items %}
-        <div class="col-md-3">
+        <div class="col-md-3 mt-4">
             <div class="card">
-                <img src="{{url_for('static',filename='images/'+ produto.image_1)}}" alt="{{produto.name}}" class="card-img-top" height="180">
+                <img src="{{url_for('static',filename='images/'+ produto.image_1)}}" alt="{{produto.name}}" class="card-img-top" height="200">
                 <div class="card-body">
                     {% if produto.discount > 0 %}
-                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
-                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{produto.discount}}%</h4>
+                    <h5 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg);
+                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{produto.discount}}%</h5>
                     {% endif %}
                     <h4 class="text-center">{{produto.name}}</h4>
                     <p class="text-center">Preço R${{produto.price}}</p>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
-                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
+                  <form action="{{url_for('AddCart')}}" method="POST">
+                    <a href="{{url_for('pagina_unica', id=produto.id)}}" class="float-left btn btn-sm btn-primary">Detalhes</a>
+                      <input type="hidden" name="produto_id" value="{{produto.id}}">
+                      <button type="submit" class="btn btn-sm btn-success float-right">Adicionar ao Carrinho</button>
+                      <input type="hidden" name="quantity" id="" value="1" min='1' max="{{produto.stock}}">
+                      {% set colors = produto.colors.split(',') %}
+                      <select name="colors" id="colors" style="visibility:hidden">
+                          {% for color in colors %}
+                          {% set col = color.split(':') %}
+                          <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                          {% endfor %}
+                      </select>
+                  </form>
                 </div>
             </div>
         </div>
@@ -174,11 +214,13 @@
     <div class="row">
     
        <div class="col text-center">
+        {% if produtos.total > 4 %}
         {% if produtos.has_prev %}
+        
         <a href="{{url_for('home', pagina=produtos.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
         {% endif %}
 
-        {% for page_num in produtos.iter_pages() %}
+        {% for page_num in produtos.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
         {% if page_num %}
 
         {% if produtos.page == page_num %}
@@ -192,8 +234,10 @@
         {% endif %}
 
         {% endfor %}
+        
         {% if produtos.has_next %}
         <a href="{{url_for('home', pagina=produtos.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+        {% endif %}
         {% endif %}
        </div>
     </div>

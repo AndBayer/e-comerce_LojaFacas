@@ -1,6 +1,6 @@
 
 from turtle import title
-from flask import render_template, session, request, url_for, flash, redirect
+from flask import render_template, session, request, url_for, flash, redirect, current_app
 from loja.produtos.models import Addproduto, Marca, Categoria
 from loja import app, db, bcrypt
 from .formulario import RegistrationForm, LoginFormulario

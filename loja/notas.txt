@@ -1,4 +1,4 @@
-PROX AULA 18
+PROX AULA 22
 
 
 PROBLEMAS E BUGS PARA CORRIGIR:
@@ -6,3 +6,4 @@ PROBLEMAS E BUGS PARA CORRIGIR:
 1- Login não é verificado, é possível editar dados mesmo sem estar logado
 2- Imagens nao estao sendo deletadas da pasta quando utilizado o DeleteProdutos
 3- Erro ao deletar marcas/categorias utilizadas
+4- Apos cadastro retorna para tela de login
