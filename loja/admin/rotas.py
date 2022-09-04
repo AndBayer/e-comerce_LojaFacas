@@ -9,7 +9,7 @@ import os
 
 
 
-@app.route('/')
+@app.route('/admin')
 def admin():
     if 'email' not in session:
         flash('Favor efetuar login primeiro', 'danger')

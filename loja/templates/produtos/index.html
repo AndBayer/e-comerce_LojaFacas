@@ -1,0 +1,206 @@
+{% extends 'layouts.html' %}
+
+{% block content %}
+<div class="container">
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Pagina Home</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Produtos</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Marca | Fabricantes
+            </a>
+            <ul class="dropdown-menu">
+            {% for marca in marcas %}
+            <a class="dropdown-item" href="{{url_for('get_marca', id=marca.id)}}">{{marca.name}}</a>
+            {% endfor %}
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Categorias
+            </a>
+            <ul class="dropdown-menu">
+            {% for categoria in categorias %}
+            <a class="dropdown-item" href="{{url_for('get_categoria', id=categoria.id)}}">{{categoria.name}}</a>
+            {% endfor %}
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        {% if marca %}
+        {% for m in marca.items %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+ m.image_1)}}" alt="{{m.name}}" class="card-img-top" height="180">
+                <div class="card-body">
+                    {% if m.discount > 0 %}
+                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
+                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{m.discount}}%</h4>
+                    {% endif %}
+                    <h4 class="text-center">{{m.name}}</h4>
+                    <p class="text-center">Preço R${{m.price}}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
+                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+    
+        <div class="col text-center">
+         {% if marca.has_prev %}
+         <a href="{{url_for('get_marca', id=get_m.id , pagina=marca.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
+         {% endif %}
+ 
+         {% for page_num in marca.iter_pages() %}
+         {% if page_num %}
+ 
+         {% if marca.page == page_num %}
+         <a href="{{url_for('get_marca',id=get_m.id, pagina=page_num)}}" class="btn btn-dark btn-sm mt-3">{{page_num}}</a>
+         {% else %}
+         <a href="{{url_for('get_marca',id=get_m.id, pagina=page_num)}}" class="btn btn-outline-dark btn-sm mt-3">{{page_num}}</a>
+         {% endif %}
+ 
+         {% else %}
+         ...
+         {% endif %}
+ 
+         {% endfor %}
+         {% if marca.has_next %}
+         <a href="{{url_for('get_marca',id=get_m.id, pagina=marca.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+         {% endif %}
+        </div>
+     </div>
+
+    <div class="row">
+        {% elif get_cat_prod %}
+        {% for get_cat in get_cat_prod.items %}
+        
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+ get_cat.image_1)}}" alt="{{get_cat.name}}" class="card-img-top" height="180">
+                <div class="card-body">
+                    {% if get_cat.discount > 0 %}
+                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
+                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{get_cat.discount}}%</h4>
+                    {% endif %}
+                    <h4 class="text-center">{{get_cat.name}}</h4>
+                    <p class="text-center">Preço R${{get_cat.price}}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
+                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="row">
+    
+            <div class="col text-center">
+             {% if get_cat_prod.has_prev %}
+             <a href="{{url_for('get_categoria', id=get_cat.id , pagina=get_cat_prod.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
+             {% endif %}
+     
+             {% for page_num in get_cat_prod.iter_pages() %}
+             {% if page_num %}
+     
+             {% if get_cat_prod.page == page_num %}
+             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-dark btn-sm mt-3">{{page_num}}</a>
+             {% else %}
+             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=page_num)}}" class="btn btn-outline-dark btn-sm mt-3">{{page_num}}</a>
+             {% endif %}
+     
+             {% else %}
+             ...
+             {% endif %}
+     
+             {% endfor %}
+             {% if get_cat_prod.has_next %}
+             <a href="{{url_for('get_categoria',id=get_cat.id, pagina=get_cat_prod.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+             {% endif %}
+            </div>
+         </div>
+
+        <div class="row">
+        {% else %}
+        {% for produto in produtos.items %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+ produto.image_1)}}" alt="{{produto.name}}" class="card-img-top" height="180">
+                <div class="card-body">
+                    {% if produto.discount > 0 %}
+                    <h4 style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-2deg); 
+                    position: absolute; top: 50%; left: 25%; font-weight: 600;">Desconto: {{produto.discount}}%</h4>
+                    {% endif %}
+                    <h4 class="text-center">{{produto.name}}</h4>
+                    <p class="text-center">Preço R${{produto.price}}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="#" class="float-left btn btn-sm btn-primary">Detalhes Produto</a>
+                    <a href="#" class="float-right btn btn-sm btn-success">Comprar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+    
+       <div class="col text-center">
+        {% if produtos.has_prev %}
+        <a href="{{url_for('home', pagina=produtos.prev_num)}}" class="btn btn-outline-dark btn-sm mt-3">Anterior</a>
+        {% endif %}
+
+        {% for page_num in produtos.iter_pages() %}
+        {% if page_num %}
+
+        {% if produtos.page == page_num %}
+        <a href="{{url_for('home', pagina=page_num)}}" class="btn btn-dark btn-sm mt-3">{{page_num}}</a>
+        {% else %}
+        <a href="{{url_for('home', pagina=page_num)}}" class="btn btn-outline-dark btn-sm mt-3">{{page_num}}</a>
+        {% endif %}
+
+        {% else %}
+        ...
+        {% endif %}
+
+        {% endfor %}
+        {% if produtos.has_next %}
+        <a href="{{url_for('home', pagina=produtos.next_num)}}" class="btn btn-outline-dark btn-sm mt-3">Próxima</a>
+        {% endif %}
+       </div>
+    </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% endblock content %}

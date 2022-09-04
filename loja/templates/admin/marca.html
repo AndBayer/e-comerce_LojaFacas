@@ -5,45 +5,41 @@
 {% include '_messages.html' %}
 
 <div class="container">
-    <nav class="navbar navbar-expand-lg bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/admin">Administrador</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/admin">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/marcas">Marcas</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/categoria">Categorias</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled">Disabled</a>
-              </li>
-            </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-          </div>
+  <nav class="navbar navbar-expand-lg bg-light">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/marcas">Marcas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/categoria">Categorias</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Adicionar
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/addmarca">Marcas</a></li>
+                <li><a class="dropdown-item" href="/addcat">Categorias</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/addproduto">Produtos</a></li>
+              </ul>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
         </div>
-      </nav>
+      </div>
+    </nav>
 </div>
 <div class="container mt-2">
     <table class="table table-sm table-striped">
@@ -61,38 +57,37 @@
                 <td>{{loop.index}}</td>
                 <td>{{marca.name}}</td>
                 
-                <td><a href="{{url_for('updatemarca', id=marca.id)}}" class="btn btn-sm btn-outline-success">Editar</a></td>
+                <td><a href="{{url_for('updatemarca', id=marca.id)}}" class="btn btn-sm btn-warning">Editar</a></td>
 
                 <!-- <td><a href="{{url_for('deletemarca', id=marca.id)}}" class="btn btn-sm btn-outline-danger">Excluir 2</a></td> -->
-                <td>
-                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="Modal-{{marca.id}}">
-                Excluir
-                  </button>
-                </td>
+                <td><button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-{{marca.id}}">
+                  Excluir
+                </button>
+              </td>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal-{{marca.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{marca.name}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <span class="text-center">Deseja realmente excluir a marca {{marca.name}} ? </span>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
+                          <form action="{{url_for('deletemarca', id=marca.id)}}" method="POST">
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </tr>
 
               
-              <div class="modal fade" id="Modal-{{marca.id}}" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="ModalLabel">{{marca.name}}</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <span class="text-danger">Deseja realmente deletar a marca {{marca.nome}}? </span>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                      <form action="{{url_for('deletemarca', id=marca.id)}}" method="POST">
-                        <button type="submit" class="btn btn-danger">Deletar</button>
-                      </form>
-                      
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
+              
             {% endfor %}
             {% else %}
             {% for categoria in categorias %}
@@ -100,9 +95,33 @@
                 <td>{{loop.index}}</td>
                 <td>{{categoria.name}}</td>
                 
-                <td><a href="{{url_for('updatecat', id=categoria.id)}}" class="btn btn-sm btn-outline-success">Editar</a></td>
-                <td><a href="" class="btn btn-sm btn-outline-warning">Deletar</a></td>
-
+                <td><a href="{{url_for('updatecat', id=categoria.id)}}" class="btn btn-sm btn-warning">Editar</a></td>
+                <!--<td><a href="" class="btn btn-sm btn-danger">Deletar</a></td>
+                 Button trigger modal -->
+                <td><button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal-{{categoria.id}}">
+                  Excluir
+                </button>
+              </td>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal-{{categoria.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{categoria.name}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <span class="text-center">Deseja realmente excluir a categoria {{categoria.name}} ? </span>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
+                        <form action="{{url_for('deletecat', id=categoria.id)}}" method="POST">
+                          <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </tr>
             {% endfor %}
             

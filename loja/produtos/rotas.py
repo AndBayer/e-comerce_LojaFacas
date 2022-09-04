@@ -1,9 +1,19 @@
 from flask import redirect, render_template, url_for, flash, request, session, current_app
+
+from loja.admin.rotas import categoria
 from .forms import Addprodutos
 from loja import db, app, photos
 from .models import Marca, Categoria, Addproduto
 import secrets, os
 
+
+@app.route('/')
+def home():
+    pagina = request.args.get('pagina',1, type=int)
+    produtos = Addproduto.query.filter(Addproduto.stock > 0).paginate(page=pagina,per_page=2)
+    marcas = Marca.query.join(Addproduto,(Marca.id == Addproduto.marca_id)).all()
+    categorias = Categoria.query.join(Addproduto,(Categoria.id == Addproduto.categoria_id)).all()
+    return render_template('produtos/index.html', produtos=produtos, marcas=marcas, categorias=categorias)
 
 @app.route('/addmarca', methods=['GET','POST'])
 def addmarca():
@@ -16,7 +26,7 @@ def addmarca():
         db.session.add(marca)
         flash(f'A marca {getmarca} foi cadastrada com sucesso','success')
         db.session.commit()
-        return redirect(url_for('addmarca'))
+        return redirect(url_for('admin'))
     return render_template('/produtos/addmarca.html', marcas='marcas')
 
 @app.route('/updatemarca/<int:id>', methods=['GET','POST'])
@@ -31,8 +41,30 @@ def updatemarca(id):
         updatemarca.name = marca
         flash(f'Sua marca foi atualizada com sucesso','success')
         db.session.commit()
-        return redirect(url_for('marcas'))
+        return redirect(url_for('admin'))
     return render_template('/produtos/updatemarca.html', title='Atualizar Fabricantes', updatemarca=updatemarca)
+
+@app.route('/marca/<int:id>')
+def get_marca(id):
+    get_m = Marca.query.filter_by(id=id).first_or_404()
+    pagina = request.args.get('pagina',1, type=int)
+    marca = Addproduto.query.filter_by(marca=get_m).paginate(page=pagina,per_page=2)
+    marcas = Marca.query.join(Addproduto,(Marca.id == Addproduto.marca_id)).all()
+    categorias = Categoria.query.join(Addproduto,(Categoria.id == Addproduto.categoria_id)).all()
+    return render_template('/produtos/index.html', marca=marca, marcas=marcas, categorias=categorias, get_m=get_m)
+
+
+
+@app.route('/categorias/<int:id>')
+def get_categoria(id):
+    pagina = request.args.get('pagina',1, type=int)
+    get_cat = Categoria.query.filter_by(id=id).first_or_404()
+    get_cat_prod = Addproduto.query.filter_by(categoria=get_cat).paginate(page=pagina,per_page=2)
+    categorias = Categoria.query.join(Addproduto,(Categoria.id == Addproduto.categoria_id)).all()
+    marcas = Marca.query.join(Addproduto,(Marca.id == Addproduto.marca_id)).all()
+    return render_template('/produtos/index.html', categorias=categorias, get_cat_prod=get_cat_prod, marcas=marcas, get_cat=get_cat)
+
+
 
 
 
@@ -47,6 +79,35 @@ def deletemarca(id):
     flash(f'A marca {marca.name} NÃO foi deletada','warning')
     return redirect(url_for('admin'))
 
+@app.route('/deletecat/<int:id>', methods=['GET','POST'])
+def deletecat(id):
+    categoria = Categoria.query.get_or_404(id)
+    if request.method == 'POST':
+        db.session.delete(categoria)
+        db.session.commit()
+        flash(f'A marca {categoria.name} foi deletada com sucesso','success')
+        return redirect(url_for('admin'))
+    flash(f'A marca {categoria.name} NÃO foi deletada','warning')
+    return redirect(url_for('admin'))
+
+
+@app.route('/deleteproduto/<int:id>', methods=['GET','POST'])
+def deleteproduto(id):
+    produto = Addproduto.query.get_or_404(id)
+    if request.method == 'POST':
+        if request.files.get('image_1'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_1))
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_2))
+                os.unlink(os.path.join(current_app.root_path,"static/images/" + produto.image_3))
+            except Exception as e:
+                print(e)
+        db.session.delete(produto)
+        db.session.commit()
+        flash(f'O produto {produto.name} foi deletado com sucesso','success')
+        return redirect(url_for('admin'))
+    flash(f'O produto {produto.name} NÃO foi deletado','warning')
+    return redirect(url_for('admin'))
 
 
 @app.route('/updatecat/<int:id>', methods=['GET','POST'])
@@ -76,7 +137,7 @@ def addcat():
         db.session.add(cat)
         flash(f'A categoria {getmarca} foi cadastrada com sucesso','success')
         db.session.commit()
-        return redirect(url_for('addcat'))
+        return redirect(url_for('admin'))
     return render_template('/produtos/addmarca.html')
 
 
