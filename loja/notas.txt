@@ -1,4 +1,4 @@
-PROX AULA 22
+PROX AULA 23 NOVAMENTE (FOR COM PROBLEMAS PARA ALTERAR COR)
 
 
 PROBLEMAS E BUGS PARA CORRIGIR:
@@ -7,3 +7,5 @@ PROBLEMAS E BUGS PARA CORRIGIR:
 2- Imagens nao estao sendo deletadas da pasta quando utilizado o DeleteProdutos
 3- Erro ao deletar marcas/categorias utilizadas
 4- Apos cadastro retorna para tela de login
+5- Não é possível alterar cor do produto no carrinho (aparecem todas as options)
+6- Não é possível filtrar por marcas e categorias quando em produtos
