@@ -34,8 +34,8 @@
                         <td>
                             {% set colors = produto.colors.split(',') %}
                             <label for="colors">Cor: </label>
-                            <select name="colors" id="">
-                                <option value="{{produto.colors}}" style="display: none;">{{produto.colors|capitalize}}</option>
+                            <select name="colors" id="colors">
+                                <option value="{{produto.color}}" style="display: none;">{{produto.color|capitalize}}</option>
                             {% for color in colors %}
                             {% set col = color.split(':') %}
                             <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
