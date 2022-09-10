@@ -9,3 +9,8 @@ PROBLEMAS E BUGS PARA CORRIGIR:
 4- Apos cadastro retorna para tela de login
 5- Não é possível alterar cor do produto no carrinho (aparecem todas as options)
 6- Não é possível filtrar por marcas e categorias quando em produtos
+
+
+IDEIAS:
+
+Incluir carrousel
